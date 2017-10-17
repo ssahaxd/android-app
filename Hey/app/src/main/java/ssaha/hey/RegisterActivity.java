@@ -100,8 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
                         else{
 
                             mRegProgress.hide();
-                            Toast.makeText(RegisterActivity.this, "Invalid Email/Password",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
