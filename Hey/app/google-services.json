@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "860809080230",
+    "firebase_url": "https://heyfirebaseproject-babb3.firebaseio.com",
+    "project_id": "heyfirebaseproject-babb3",
+    "storage_bucket": "heyfirebaseproject-babb3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860809080230:android:e58b01be622df910",
+        "android_client_info": {
+          "package_name": "ssaha.hey"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "860809080230-9q1qnc3g06fln07cld7um8hq7og70r6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ssaha.hey",
+            "certificate_hash": "c7b69429116e58be3f065e5fd0d574e48092e494"
+          }
+        },
+        {
+          "client_id": "860809080230-6f817acpo7kj7ib1qmtotbjme5jpr1ef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_9mHFCKTs9KXwtlQL2y0jPvcQouNKIZY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "860809080230-6f817acpo7kj7ib1qmtotbjme5jpr1ef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
