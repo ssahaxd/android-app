@@ -1,5 +1,6 @@
 package ssaha.hey;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -62,7 +64,7 @@ public class UsersActivity extends AppCompatActivity {
             protected void populateViewHolder(UsersViewHolder usersViewHolder, Users users, int i) {
                 usersViewHolder.setName(users.getName());
                 usersViewHolder.setStatus(users.getStatus());
-
+                usersViewHolder.setUserImage(users.getThumb_image(), getApplicationContext());
 
             }
         };
@@ -90,9 +92,9 @@ public class UsersActivity extends AppCompatActivity {
             userStatusView.setText(status);
         }
 
-        public void setImage(Uri image){
+        public void setUserImage(String thumb_image, Context ctx){
             CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.user_single_image);
-            userImageView.setImageURI(image);
+            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.default_avatar).into(userImageView);
         }
     }
 }
