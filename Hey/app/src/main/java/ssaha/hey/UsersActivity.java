@@ -1,6 +1,7 @@
 package ssaha.hey;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,6 +66,16 @@ public class UsersActivity extends AppCompatActivity {
                 usersViewHolder.setName(users.getName());
                 usersViewHolder.setStatus(users.getStatus());
                 usersViewHolder.setUserImage(users.getThumb_image(), getApplicationContext());
+                final String user_id = getRef(i).getKey();
+
+                usersViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent profile_intent = new Intent(UsersActivity.this, ProfileActivity.class);
+                        profile_intent.putExtra("user_id", user_id);
+                        startActivity(profile_intent);
+                    }
+                });
 
             }
         };
