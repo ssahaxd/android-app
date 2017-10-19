@@ -1,7 +1,10 @@
 package ssaha.hey;
 
 import android.app.ProgressDialog;
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +25,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.Date;
+
+import static android.R.color.darker_gray;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageView mProfileImage;
@@ -31,6 +38,8 @@ public class ProfileActivity extends AppCompatActivity {
     //Database Reference
     private DatabaseReference mUsersDatabases;
     private DatabaseReference mFriendReqDatabase;
+    private DatabaseReference mFriendDatabase;
+
 
     //Firebase Auth
     private FirebaseUser mCurrentUser;
@@ -50,8 +59,11 @@ public class ProfileActivity extends AppCompatActivity {
         // user id of the users profile
         final String user_id = getIntent().getStringExtra("user_id");
 
+        //Database
         mUsersDatabases = FirebaseDatabase.getInstance().getReference().child("User").child(user_id);
         mFriendReqDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
+        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -62,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileFriendsCount = (TextView)findViewById(R.id.profile_friends_count);
         mProfielSendRequestBtn = (Button)findViewById(R.id.profile_request_btn);
 
+        //Indication friend or not
         mCurrent_state = "not_friend";
 
         mProgressDialog = new ProgressDialog(this);
@@ -81,7 +94,54 @@ public class ProfileActivity extends AppCompatActivity {
                 mProfileName.setText(dispaly_name);
                 mProfileStatus.setText(dispaly_status);
                 Picasso.with(ProfileActivity.this).load(dispaly_image).placeholder(R.drawable.default_avatar).into(mProfileImage);
-                mProgressDialog.dismiss();
+
+                /*----------------Friend Request / Accept ------------------*/
+                mFriendReqDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChild(user_id)){
+                            String req_type = dataSnapshot.child(user_id).child("request_type").getValue().toString();
+                            if (req_type.equals("received")){
+                                mCurrent_state = "req_received";
+                                mProfielSendRequestBtn.setText("Accept Friend Request");
+                            }else if(req_type.equals("sent")) {
+                                mCurrent_state = "req_sent";
+                                mProfielSendRequestBtn.setText("Cancel Friend Request");
+                            }
+                            mProgressDialog.dismiss();
+                        }else{
+                            mFriendDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild(user_id)){
+                                        mCurrent_state = "friends";
+                                        mProfielSendRequestBtn.setText("Un-friend");
+
+                                    }
+                                    mProgressDialog.dismiss();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    mProgressDialog.dismiss();
+                                }
+                            });
+                        }
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
 
             }
 
@@ -92,8 +152,15 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         mProfielSendRequestBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
+
+                mProfielSendRequestBtn.setEnabled(false);
+                mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(darker_gray));
+
+                /*----------------Not Friend------------------*/
+
                 if (mCurrent_state.equals("not_friend")){
                     mFriendReqDatabase.child(mCurrentUser.getUid()).child(user_id).child("request_type")
                             .setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -104,6 +171,13 @@ public class ProfileActivity extends AppCompatActivity {
                                         .setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
+
+                                        mProfielSendRequestBtn.setEnabled(true);
+                                        mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                                        mCurrent_state = "req_sent";
+                                        mProfielSendRequestBtn.setText("Cancel Friend Request");
+
+
                                         Toast.makeText(ProfileActivity.this, "Request Send", Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -113,6 +187,62 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
                 }
+
+                /*----------------Cancel Friend Req------------------*/
+                if (mCurrent_state.equals("req_sent")){
+                    mFriendReqDatabase.child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            mFriendReqDatabase.child(user_id).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mProfielSendRequestBtn.setEnabled(true);
+                                    mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                                    mCurrent_state = "not_friend";
+                                    mProfielSendRequestBtn.setText("Send Friend Request");
+                                }
+                            });
+                        }
+                    });
+
+                }
+
+                /*----------------Receive Friend Req/Accepting req------------------*/
+                if (mCurrent_state.equals("req_received")){
+
+                    final String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                    mFriendDatabase.child(mCurrentUser.getUid()).child(user_id).setValue(currentDate)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mFriendDatabase.child(user_id).child(mCurrentUser.getUid()).setValue(currentDate)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    mFriendReqDatabase.child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            mFriendReqDatabase.child(user_id).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    mProfielSendRequestBtn.setEnabled(true);
+                                                                    mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                                                                    mCurrent_state = "friends";
+                                                                    mProfielSendRequestBtn.setText("Un-friend");
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                }
+                            });
+                }
+
+                /*----------------Un-Friend Req------------------*/
+
+
+
             }
         });
 
