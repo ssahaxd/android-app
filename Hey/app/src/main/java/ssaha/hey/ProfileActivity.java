@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import static android.R.color.darker_gray;
 
@@ -38,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     //Database Reference
     private DatabaseReference mUsersDatabases;
+    private DatabaseReference mRootref;
     private DatabaseReference mFriendReqDatabase;
     private DatabaseReference mFriendDatabase;
     private DatabaseReference mNotificationDatabase;
@@ -62,10 +64,11 @@ public class ProfileActivity extends AppCompatActivity {
         final String user_id = getIntent().getStringExtra("user_id");
 
         //Database
-        mUsersDatabases = FirebaseDatabase.getInstance().getReference().child("User").child(user_id);
-        mFriendReqDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
-        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+        mUsersDatabases = FirebaseDatabase.getInstance().getReference().child("users").child(user_id);
+        mFriendReqDatabase = FirebaseDatabase.getInstance().getReference().child("friend_req");
+        mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("friends");
         mNotificationDatabase = FirebaseDatabase.getInstance().getReference().child("notifications");
+        mRootref = FirebaseDatabase.getInstance().getReference();
 
 
 
@@ -176,36 +179,30 @@ public class ProfileActivity extends AppCompatActivity {
                 /*----------------Not Friend------------------*/
 
                 if (mCurrent_state.equals("not_friend")){
-                    mFriendReqDatabase.child(mCurrentUser.getUid()).child(user_id).child("request_type")
-                            .setValue("sent").addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    DatabaseReference newNotificationref = mRootref.child("notification").child(user_id).push();
+                    String newNotificationId = newNotificationref.getKey();
+
+                    HashMap<String , String > notificationData = new HashMap<String, String>();
+                    notificationData.put("form", mCurrentUser.getUid());
+                    notificationData.put("type", "request");
+
+                    Map requestMap = new HashMap();
+                    requestMap.put("friend_req/" + mCurrentUser.getUid() + "/" + user_id + "request_type", "sent");
+                    requestMap.put("friend_req/" + user_id + "/" + mCurrentUser.getUid() + "request_type", "received");
+                    requestMap.put("notifications/" + user_id +"/" + newNotificationId, notificationData);
+
+                    mRootref.updateChildren(requestMap, new DatabaseReference.CompletionListener() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                mFriendReqDatabase.child(user_id).child(mCurrentUser.getUid()).child("request_type")
-                                        .setValue("received").addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-
-                                        HashMap<String , String > notificationData = new HashMap<String, String>();
-                                        notificationData.put("form", mCurrentUser.getUid());
-                                        notificationData.put("type", "request");
-
-                                        mNotificationDatabase.child(user_id).push().setValue(notificationData).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                mProfielSendRequestBtn.setEnabled(true);
-                                                mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                                                mCurrent_state = "req_sent";
-                                                mProfielSendRequestBtn.setText("Cancel Friend Request");
-                                            }
-                                        });
-
-
-                                        Toast.makeText(ProfileActivity.this, "Request Send", Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError != null){
+                                Toast.makeText(ProfileActivity.this, "Error Please try again later", Toast.LENGTH_LONG).show();
                             }else{
-                                Toast.makeText(ProfileActivity.this, "Failed to send Request", Toast.LENGTH_LONG).show();
+                                mProfielSendRequestBtn.setEnabled(true);
+                                mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                                mCurrent_state = "req_sent";
+                                mProfielSendRequestBtn.setText("Cancel Friend Request");
+                                Toast.makeText(ProfileActivity.this, "Request Send", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -213,10 +210,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                 /*----------------Cancel Friend Req------------------*/
                 if (mCurrent_state.equals("req_sent")){
-                    mFriendReqDatabase.child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    mRootref.child("Friend_req").child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mFriendReqDatabase.child(user_id).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            mRootref.child("Friend_req").child(user_id).child(mCurrentUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     mProfielSendRequestBtn.setEnabled(true);

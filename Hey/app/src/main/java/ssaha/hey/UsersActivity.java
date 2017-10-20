@@ -39,7 +39,7 @@ public class UsersActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Database Reference
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("User");
+        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
 
         mUsersList = (RecyclerView)findViewById(R.id.users_list);
