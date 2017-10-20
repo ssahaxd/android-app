@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import static android.R.color.darker_gray;
 
@@ -33,12 +34,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ImageView mProfileImage;
     private TextView mProfileName, mProfileStatus, mProfileFriendsCount;
-    private Button mProfielSendRequestBtn;
+    private Button mProfielSendRequestBtn, mDeclineBtn;
 
     //Database Reference
     private DatabaseReference mUsersDatabases;
     private DatabaseReference mFriendReqDatabase;
     private DatabaseReference mFriendDatabase;
+    private DatabaseReference mNotificationDatabase;
 
 
     //Firebase Auth
@@ -63,6 +65,8 @@ public class ProfileActivity extends AppCompatActivity {
         mUsersDatabases = FirebaseDatabase.getInstance().getReference().child("User").child(user_id);
         mFriendReqDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req");
         mFriendDatabase = FirebaseDatabase.getInstance().getReference().child("Friends");
+        mNotificationDatabase = FirebaseDatabase.getInstance().getReference().child("notifications");
+
 
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -73,6 +77,10 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileStatus = (TextView)findViewById(R.id.profile_status);
         mProfileFriendsCount = (TextView)findViewById(R.id.profile_friends_count);
         mProfielSendRequestBtn = (Button)findViewById(R.id.profile_request_btn);
+        mDeclineBtn = (Button)findViewById(R.id.profile_reject_btn);
+
+        mDeclineBtn.setVisibility(View.INVISIBLE);
+        mDeclineBtn.setEnabled(false);
 
         //Indication friend or not
         mCurrent_state = "not_friend";
@@ -105,9 +113,12 @@ public class ProfileActivity extends AppCompatActivity {
                             if (req_type.equals("received")){
                                 mCurrent_state = "req_received";
                                 mProfielSendRequestBtn.setText("Accept Friend Request");
+                                mDeclineBtn.setVisibility(View.VISIBLE);
+                                mDeclineBtn.setEnabled(true);
                             }else if(req_type.equals("sent")) {
                                 mCurrent_state = "req_sent";
                                 mProfielSendRequestBtn.setText("Cancel Friend Request");
+
                             }
                             mProgressDialog.dismiss();
                         }else{
@@ -117,6 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
                                     if (dataSnapshot.hasChild(user_id)){
                                         mCurrent_state = "friends";
                                         mProfielSendRequestBtn.setText("Un-friend");
+
 
                                     }
                                     mProgressDialog.dismiss();
@@ -158,6 +170,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                 mProfielSendRequestBtn.setEnabled(false);
                 mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(darker_gray));
+                mDeclineBtn.setVisibility(View.INVISIBLE);
+                mDeclineBtn.setEnabled(false);
 
                 /*----------------Not Friend------------------*/
 
@@ -172,10 +186,19 @@ public class ProfileActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
 
-                                        mProfielSendRequestBtn.setEnabled(true);
-                                        mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                                        mCurrent_state = "req_sent";
-                                        mProfielSendRequestBtn.setText("Cancel Friend Request");
+                                        HashMap<String , String > notificationData = new HashMap<String, String>();
+                                        notificationData.put("form", mCurrentUser.getUid());
+                                        notificationData.put("type", "request");
+
+                                        mNotificationDatabase.child(user_id).push().setValue(notificationData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                mProfielSendRequestBtn.setEnabled(true);
+                                                mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                                                mCurrent_state = "req_sent";
+                                                mProfielSendRequestBtn.setText("Cancel Friend Request");
+                                            }
+                                        });
 
 
                                         Toast.makeText(ProfileActivity.this, "Request Send", Toast.LENGTH_LONG).show();

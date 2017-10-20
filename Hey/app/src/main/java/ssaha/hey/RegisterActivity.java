@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 
@@ -101,9 +102,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                             FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
                             String uid = current_user.getUid();
+                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
                             mDatabase = FirebaseDatabase.getInstance().getReference().child("User").child(uid);
                             HashMap<String, String> userMap= new HashMap<>();
                             userMap.put("name", display_name);
+                            userMap.put("device_token", deviceToken);
                             userMap.put("phone", "99999999");
                             userMap.put("status", "Hi there I'm Using Buddys");
                             userMap.put("image", "default");
@@ -128,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
                         else{
 
                             mRegProgress.hide();
-                            Toast.makeText(RegisterActivity.this, "Invalid Email/Password", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Failed to Sign up!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
