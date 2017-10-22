@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -40,21 +41,24 @@ public class Hey extends Application{
 
         mAuth = FirebaseAuth.getInstance();
 
-        mUserDatabase = FirebaseDatabase.getInstance()
-                .getReference().child("users").child(mAuth.getCurrentUser().getUid());
+        if (mAuth.getCurrentUser() != null) {
 
-        mUserDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null) {
-                    mUserDatabase.child("online").onDisconnect().setValue(false);
+            mUserDatabase = FirebaseDatabase.getInstance()
+                    .getReference().child("users").child(mAuth.getCurrentUser().getUid());
+
+            mUserDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot != null) {
+                        mUserDatabase.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 }
