@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity  {
         mLoginProgress = new ProgressDialog(this);
 
         //Database reference
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("User");
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users");
 
 
 
