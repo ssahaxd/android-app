@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity  {
 
                 if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)){
 
-                    mLoginProgress.setTitle("Loging In");
+                    mLoginProgress.setTitle("Logging In");
                     mLoginProgress.setMessage("Please Wait");
                     mLoginProgress.setCanceledOnTouchOutside(false);
                     mLoginProgress.show();
@@ -112,3 +112,4 @@ public class LoginActivity extends AppCompatActivity  {
         });
     }
 }
+

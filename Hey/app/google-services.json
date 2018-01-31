@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "860809080230-dsqqlnqg3vnc63d5ht9vl9gph0iuerll.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ssaha.hey",
+            "certificate_hash": "0bda7006c8d9dba0c03226b92d31f99ca4f14b52"
+          }
+        },
+        {
           "client_id": "860809080230-9q1qnc3g06fln07cld7um8hq7og70r6e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
