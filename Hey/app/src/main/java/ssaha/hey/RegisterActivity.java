@@ -1,32 +1,33 @@
 package ssaha.hey;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout mDisplayName;
     private TextInputLayout mEmail;
+    private TextInputLayout mPhone;
     private TextInputLayout mPassword;
     private Button mCreatBtn;
 
@@ -41,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Firebase Auth
     private FirebaseAuth mAuth;
-
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
 
     @Override
@@ -50,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         //Toolbar Set
-        mToolbar = (Toolbar)findViewById(R.id.login_toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Create Account");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,80 +61,78 @@ public class RegisterActivity extends AppCompatActivity {
 
         mDisplayName = (TextInputLayout) findViewById(R.id.reg_display_name);
         mEmail = (TextInputLayout) findViewById(R.id.login_email);
+        mPhone = (TextInputLayout) findViewById(R.id.login_phone);
         mPassword = (TextInputLayout) findViewById(R.id.login_password);
         mCreatBtn = (Button) findViewById(R.id.reg_create_btn);
 
         // Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        mCreatBtn.setOnClickListener(new View.OnClickListener(){
+        mCreatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 String display_name = mDisplayName.getEditText().getText().toString();
                 String email = mEmail.getEditText().getText().toString();
+                String phoneNumber = mPhone.getEditText().getText().toString();
                 String password = mPassword.getEditText().getText().toString();
 
-                if(!TextUtils.isEmpty(display_name)|| !TextUtils.isEmpty(email)|| !TextUtils.isEmpty(password)){
+                if (!TextUtils.isEmpty(display_name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)) {
 
                     mRegProgress.setTitle("Registering User");
                     mRegProgress.setMessage("Please wait while we create your account.");
                     mRegProgress.setCanceledOnTouchOutside(false);
                     mRegProgress.show();
-                    register_user(display_name, email, password);
+                    //register_user(display_name, email, phoneNumber, password);
+
                 }
 
-
-                
+                PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                        phoneNumber,
+                        60,
+                        TimeUnit.SECONDS,
+                        RegisterActivity.this,
+                        mCallbacks
+                );
             }
         });
 
+        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+
+            }
+        };
+
+
     }
 
-    private void register_user(final String display_name, String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
-
-                            FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-                            String uid = current_user.getUid();
-                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
-                            mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
-                            HashMap<String, String> userMap= new HashMap<>();
-                            userMap.put("name", display_name);
-                            userMap.put("device_token", deviceToken);
-                            userMap.put("phone", "99999999");
-                            userMap.put("status", "Hi there I'm Using Buddys");
-                            userMap.put("image", "default");
-                            userMap.put("thumb_image", "default");
-
-                            mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        mRegProgress.dismiss();
-
-                                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(mainIntent);
-                                        finish();
-                                    }
-                                }
-                            });
+                            // Sign in success, update UI with the signed-in user's information
 
 
-                        }
-                        else{
+                            FirebaseUser user = task.getResult().getUser();
+                            // ...
+                        } else {
+                            // Sign in failed, display a message and update the UI
 
-                            mRegProgress.hide();
-                            Toast.makeText(RegisterActivity.this, "Failed to Sign up!", Toast.LENGTH_SHORT).show();
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                            }
                         }
                     }
                 });
     }
+
+
 }
