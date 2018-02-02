@@ -3,19 +3,16 @@ package ssaha.hey;
 import android.app.ProgressDialog;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -72,16 +69,15 @@ public class ProfileActivity extends AppCompatActivity {
         mRootref = FirebaseDatabase.getInstance().getReference();
 
 
-
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
         mProfileImage = (ImageView) findViewById(R.id.profile_image);
-        mProfileName = (TextView)findViewById(R.id.profile_displayName);
-        mProfileStatus = (TextView)findViewById(R.id.profile_status);
-        mProfileFriendsCount = (TextView)findViewById(R.id.profile_friends_count);
-        mProfielSendRequestBtn = (Button)findViewById(R.id.profile_request_btn);
-        mDeclineBtn = (Button)findViewById(R.id.profile_reject_btn);
+        mProfileName = (TextView) findViewById(R.id.profile_displayName);
+        mProfileStatus = (TextView) findViewById(R.id.profile_status);
+        mProfileFriendsCount = (TextView) findViewById(R.id.profile_friends_count);
+        mProfielSendRequestBtn = (Button) findViewById(R.id.profile_request_btn);
+        mDeclineBtn = (Button) findViewById(R.id.profile_reject_btn);
 
         mDeclineBtn.setVisibility(View.INVISIBLE);
         mDeclineBtn.setEnabled(false);
@@ -112,24 +108,24 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if (dataSnapshot.hasChild(user_id)){
+                        if (dataSnapshot.hasChild(user_id)) {
                             String req_type = dataSnapshot.child(user_id).child("request_type").getValue().toString();
-                            if (req_type.equals("received")){
+                            if (req_type.equals("received")) {
                                 mCurrent_state = "req_received";
                                 mProfielSendRequestBtn.setText("Accept Friend Request");
                                 mDeclineBtn.setVisibility(View.VISIBLE);
                                 mDeclineBtn.setEnabled(true);
-                            }else if(req_type.equals("sent")) {
+                            } else if (req_type.equals("sent")) {
                                 mCurrent_state = "req_sent";
                                 mProfielSendRequestBtn.setText("Cancel Friend Request");
 
                             }
                             mProgressDialog.dismiss();
-                        }else{
+                        } else {
                             mFriendDatabase.child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild(user_id)){
+                                    if (dataSnapshot.hasChild(user_id)) {
                                         mCurrent_state = "friends";
                                         mProfielSendRequestBtn.setText("Un-friend");
 
@@ -146,7 +142,6 @@ public class ProfileActivity extends AppCompatActivity {
                         }
 
 
-
                     }
 
                     @Override
@@ -154,9 +149,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                     }
                 });
-
-
-
 
 
             }
@@ -204,26 +196,26 @@ public class ProfileActivity extends AppCompatActivity {
 
                 /*----------------Not Friend------------------*/
 
-                if (mCurrent_state.equals("not_friend")){
+                if (mCurrent_state.equals("not_friend")) {
 
                     DatabaseReference newNotificationref = mRootref.child("notification").child(user_id).push();
                     String newNotificationId = newNotificationref.getKey();
 
-                    HashMap<String , String > notificationData = new HashMap<String, String>();
+                    HashMap<String, String> notificationData = new HashMap<String, String>();
                     notificationData.put("form", mCurrentUser.getUid());
                     notificationData.put("type", "request");
 
                     Map requestMap = new HashMap();
                     requestMap.put("friend_req/" + mCurrentUser.getUid() + "/" + user_id + "/" + "request_type", "sent");
                     requestMap.put("friend_req/" + user_id + "/" + mCurrentUser.getUid() + "/" + "request_type", "received");
-                    requestMap.put("notifications/" + user_id +"/" + newNotificationId, notificationData);
+                    requestMap.put("notifications/" + user_id + "/" + newNotificationId, notificationData);
 
                     mRootref.updateChildren(requestMap, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if (databaseError != null){
+                            if (databaseError != null) {
                                 Toast.makeText(ProfileActivity.this, "Error Please try again later", Toast.LENGTH_LONG).show();
-                            }else{
+                            } else {
                                 mProfielSendRequestBtn.setEnabled(true);
                                 mProfielSendRequestBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                                 mCurrent_state = "req_sent";
@@ -235,7 +227,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 /*----------------Cancel Friend Req------------------*/
-                if (mCurrent_state.equals("req_sent")){
+                if (mCurrent_state.equals("req_sent")) {
                     mRootref.child("friend_req").child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -255,7 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 /*----------------Receive Friend Req/Accepting req------------------*/
-                if (mCurrent_state.equals("req_received")){
+                if (mCurrent_state.equals("req_received")) {
 
                     final String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                     mFriendDatabase.child(mCurrentUser.getUid()).child(user_id).child("date").setValue(currentDate)
@@ -287,7 +279,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 /*----------------Un-Friend Req------------------*/
-                if (mCurrent_state.equals("friends")){
+                if (mCurrent_state.equals("friends")) {
                     mRootref.child("friends").child(mCurrentUser.getUid()).child(user_id).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
