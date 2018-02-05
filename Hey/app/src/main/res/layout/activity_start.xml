@@ -21,25 +21,12 @@
         android:id="@+id/start_reg_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/start_login_btn"
-        android:layout_below="@+id/start_login_btn"
-        android:layout_marginTop="29dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp"
         android:background="@color/colorAccent"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:text="@string/sign_up"
         android:textColor="@android:color/background_light" />
-
-    <Button
-        android:id="@+id/start_login_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="46dp"
-        android:background="@color/common_google_signin_btn_text_dark_default"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:text="@string/sign_in"
-        android:textColor="@color/colorPrimaryDark" />
 </RelativeLayout>

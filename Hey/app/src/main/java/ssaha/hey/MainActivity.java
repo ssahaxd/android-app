@@ -111,10 +111,6 @@ public class MainActivity extends AppCompatActivity {
         }
         */
         switch (item.getItemId()) {
-            case R.id.main_logout_btn:
-                FirebaseAuth.getInstance().signOut();
-                sendToStart();
-                return true;
             case R.id.main_setings_btn:
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
@@ -125,8 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return true;
-
-
         }
     }
 }
