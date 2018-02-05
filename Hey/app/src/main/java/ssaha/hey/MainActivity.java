@@ -1,10 +1,10 @@
 package ssaha.hey;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,20 +41,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
         mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Buddys");
 
 
         //Tabs
-        mViewPager = (ViewPager)findViewById(R.id.main_tabPager);
+        mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mTabLayout = (TabLayout)findViewById(R.id.main_tabs);
+        mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
@@ -63,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser == null){
+        if (currentUser == null) {
             sendToStart();
 
-        }else{
+        } else {
             mUserRef.child("online").setValue("true");
         }
     }
@@ -82,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendToStart() {
-        Intent startIntent = new Intent( MainActivity.this, StartActivity.class);
+        Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();
     }
@@ -112,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(settingsIntent);
         }
         */
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.main_logout_btn:
                 FirebaseAuth.getInstance().signOut();
                 sendToStart();
@@ -122,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(settingsIntent);
                 return true;
             case R.id.main_all_users:
-                    Intent usersIntent = new Intent(MainActivity.this, UsersActivity.class);
+                Intent usersIntent = new Intent(MainActivity.this, UsersActivity.class);
                 startActivity(usersIntent);
                 return true;
             default:

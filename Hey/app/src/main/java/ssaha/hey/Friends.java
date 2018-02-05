@@ -8,7 +8,7 @@ public class Friends {
 
     public String date;
 
-    public Friends(){
+    public Friends() {
 
     }
 

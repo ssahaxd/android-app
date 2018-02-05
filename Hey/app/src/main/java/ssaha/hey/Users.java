@@ -10,7 +10,7 @@ public class Users {
     public String image;
     public String thumb_image;
 
-    public Users (){
+    public Users() {
 
     }
 

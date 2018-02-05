@@ -21,7 +21,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by ssah_ on 10/23/2017.
  */
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
 
     private List<Messages> mMessageList;
@@ -37,26 +37,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.message_single_layout ,parent, false);
+                .inflate(R.layout.message_single_layout, parent, false);
 
         return new MessageViewHolder(v);
 
-    }
-
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView messageText;
-        public CircleImageView profileImage;
-        public TextView displayName;
-
-        public MessageViewHolder(View view) {
-            super(view);
-
-            messageText = (TextView) view.findViewById(R.id.message_text_layout);
-            profileImage = (CircleImageView) view.findViewById(R.id.message_profile_layout);
-            displayName = (TextView) view.findViewById(R.id.name_text_layout);
-
-        }
     }
 
     @Override
@@ -99,6 +83,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return mMessageList.size();
     }
 
+    public class MessageViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView messageText;
+        public CircleImageView profileImage;
+        public TextView displayName;
+
+        public MessageViewHolder(View view) {
+            super(view);
+
+            messageText = (TextView) view.findViewById(R.id.message_text_layout);
+            profileImage = (CircleImageView) view.findViewById(R.id.message_profile_layout);
+            displayName = (TextView) view.findViewById(R.id.name_text_layout);
+
+        }
+    }
 
 
 }

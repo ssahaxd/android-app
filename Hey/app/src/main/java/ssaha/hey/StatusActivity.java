@@ -1,10 +1,10 @@
 package ssaha.hey;
 
 import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +42,7 @@ public class StatusActivity extends AppCompatActivity {
 
         mStatusDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(current_uid);
 
-        mToolbar = (Toolbar)findViewById(R.id.status_appBar);
+        mToolbar = (Toolbar) findViewById(R.id.status_appBar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Edit Status");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,11 +50,8 @@ public class StatusActivity extends AppCompatActivity {
         String status_value = getIntent().getStringExtra("status_value");
 
 
-
-
-
         //Status Edit
-        mStatus = (TextInputLayout)findViewById(R.id.status_input);
+        mStatus = (TextInputLayout) findViewById(R.id.status_input);
         mSavebtn = (Button) findViewById(R.id.status_save_btn);
 
         mStatus.getEditText().setText(status_value);
@@ -73,7 +70,7 @@ public class StatusActivity extends AppCompatActivity {
                 mStatusDatabase.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             mProgress.dismiss();
                         } else {
                             Toast.makeText(getApplicationContext(), "There Was some Problem Please Try Again", Toast.LENGTH_LONG).show();

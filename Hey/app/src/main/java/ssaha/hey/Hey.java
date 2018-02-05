@@ -1,7 +1,6 @@
 package ssaha.hey;
 
 import android.app.Application;
-import android.provider.ContactsContract;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -17,11 +16,10 @@ import com.squareup.picasso.Picasso;
  * Created by ssah_ on 10/19/2017.
  */
 
-public class Hey extends Application{
+public class Hey extends Application {
 
     private DatabaseReference mUserDatabase;
     private FirebaseAuth mAuth;
-
 
 
     @Override

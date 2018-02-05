@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AlertDialogLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,15 +50,13 @@ public class FriendsFragment extends Fragment {
     }
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
 
-        mFriendsList = (RecyclerView)mMainView.findViewById(R.id.friends_list);
+        mFriendsList = (RecyclerView) mMainView.findViewById(R.id.friends_list);
         mAuth = FirebaseAuth.getInstance();
 
         mCurrent_user_id = mAuth.getCurrentUser().getUid();
@@ -88,7 +85,7 @@ public class FriendsFragment extends Fragment {
             protected void populateViewHolder(final FriendsViewHolder friendsViewHolder, Friends friends, int i) {
 
                 friendsViewHolder.setDate(friends.getDate());
-                
+
                 final String list_user_id = getRef(i).getKey();
 
                 mUsersDatabase.child(list_user_id).addValueEventListener(new ValueEventListener() {
@@ -97,9 +94,9 @@ public class FriendsFragment extends Fragment {
                         final String userName = dataSnapshot.child("name").getValue().toString();
                         final String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
 
-                        if(dataSnapshot.hasChild("online")) {
+                        if (dataSnapshot.hasChild("online")) {
 
-                            String  userOnline = dataSnapshot.child("online").getValue().toString();
+                            String userOnline = dataSnapshot.child("online").getValue().toString();
                             friendsViewHolder.setUserOnline(userOnline);
 
                         }
@@ -118,7 +115,7 @@ public class FriendsFragment extends Fragment {
                                     public void onClick(DialogInterface dialog, int i) {
 
                                         //Click Event for each item.
-                                        if(i == 0){
+                                        if (i == 0) {
 
                                             Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
                                             profileIntent.putExtra("user_id", list_user_id);
@@ -126,7 +123,7 @@ public class FriendsFragment extends Fragment {
 
                                         }
 
-                                        if(i == 1){
+                                        if (i == 1) {
 
                                             Intent chatIntent = new Intent(getContext(), ChatActivity.class);
                                             chatIntent.putExtra("user_id", list_user_id);
@@ -159,7 +156,7 @@ public class FriendsFragment extends Fragment {
 
         View mView;
 
-        public FriendsViewHolder(View itemView){
+        public FriendsViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
@@ -167,7 +164,7 @@ public class FriendsFragment extends Fragment {
         }
 
 
-        public void setName(String name){
+        public void setName(String name) {
 
             TextView userNameView = (TextView) mView.findViewById(R.id.user_single_name);
             userNameView.setText(name);
@@ -191,7 +188,7 @@ public class FriendsFragment extends Fragment {
 
             ImageView userOnlineView = (ImageView) mView.findViewById(R.id.user_single_online_icon);
 
-            if(online_status.equals("true")){
+            if (online_status.equals("true")) {
 
                 userOnlineView.setVisibility(View.VISIBLE);
 

@@ -8,14 +8,14 @@ import android.support.v4.app.FragmentPagerAdapter;
  * Created by ssah_ on 10/18/2017.
  */
 
-class SectionsPagerAdapter extends FragmentPagerAdapter{
+class SectionsPagerAdapter extends FragmentPagerAdapter {
     public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 RequestsFragment requestsFragment = new RequestsFragment();
                 return requestsFragment;
@@ -36,8 +36,8 @@ class SectionsPagerAdapter extends FragmentPagerAdapter{
     }
 
     //Title for the Tabs
-    public CharSequence getPageTitle(int position){
-        switch (position){
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
             case 0:
                 return "1+";
             case 1:
@@ -45,7 +45,7 @@ class SectionsPagerAdapter extends FragmentPagerAdapter{
             case 2:
                 return "Friends";
             default:
-                return  null;
+                return null;
         }
     }
 }

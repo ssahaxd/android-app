@@ -4,9 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -29,42 +28,31 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
-import static android.R.attr.bitmap;
-import static android.R.attr.thumb;
-
 public class SettingsActivity extends AppCompatActivity {
 
+    private static final int GALLERY_PICK = 1;
     private DatabaseReference mUserDatabase;
     private FirebaseUser mCurrentUser;
-
-
     //Android Layout
     private CircleImageView mDisplayImage;
     private TextView mName;
     private TextView mStatus;
     private Button mStatusBtn;
     private Button mImageBtn;
-
-
     //Firebase Storage Reference
     private StorageReference mImageStorage;
-
     // Progress
     private ProgressDialog mProgressDialog;
-
-    private static final int GALLERY_PICK = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +62,11 @@ public class SettingsActivity extends AppCompatActivity {
         mDisplayImage = (CircleImageView) findViewById(R.id.settings_image);
         mName = (TextView) findViewById(R.id.settings_display_name);
         mStatus = (TextView) findViewById(R.id.settings_status);
-        mStatusBtn =(Button)findViewById(R.id.settings_status_btn);
-        mImageBtn = (Button)findViewById(R.id.settings_image_btn);
+        mStatusBtn = (Button) findViewById(R.id.settings_status_btn);
+        mImageBtn = (Button) findViewById(R.id.settings_image_btn);
 
         // Firebase
         mImageStorage = FirebaseStorage.getInstance().getReference();
-
 
 
         //Firebase
@@ -100,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
                 //Changing the Settings values
                 mName.setText(name);
                 mStatus.setText(status);
-                if(!image.equals("default")){
+                if (!image.equals("default")) {
 
 
                     Picasso.with(SettingsActivity.this).load(image).networkPolicy(NetworkPolicy.OFFLINE)
@@ -146,7 +133,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Intent galletyIntent = new Intent();
                 galletyIntent.setType("image/*");
                 galletyIntent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(galletyIntent, "SELECT IMAGE"),GALLERY_PICK);
+                startActivityForResult(Intent.createChooser(galletyIntent, "SELECT IMAGE"), GALLERY_PICK);
 
                 /*
                 CropImage.activity()
@@ -161,11 +148,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == GALLERY_PICK && resultCode == RESULT_OK){
+        if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
             Uri imageUri = data.getData();
 
             CropImage.activity(imageUri)
-                    .setAspectRatio(1,1)
+                    .setAspectRatio(1, 1)
                     .start(this);
         }
 
@@ -209,10 +196,9 @@ public class SettingsActivity extends AppCompatActivity {
                 filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful()){
+                        if (task.isSuccessful()) {
 
-                            @SuppressWarnings("VisibleForTests") final
-                            String download_url = task.getResult().getDownloadUrl().toString();
+                            @SuppressWarnings("VisibleForTests") final String download_url = task.getResult().getDownloadUrl().toString();
                             UploadTask uploadTask = thumb_filepath.putBytes(thumb_byte);
                             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -225,17 +211,17 @@ public class SettingsActivity extends AppCompatActivity {
                                     update_hashMap.put("image", download_url);
                                     update_hashMap.put("thumb_image", thumb_downloadUrl);
 
-                                    if(thumb_task.isSuccessful()){
+                                    if (thumb_task.isSuccessful()) {
                                         mUserDatabase.updateChildren(update_hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()){
+                                                if (task.isSuccessful()) {
                                                     mProgressDialog.dismiss();
                                                     Toast.makeText(SettingsActivity.this, "Working", Toast.LENGTH_LONG).show();
                                                 }
                                             }
                                         });
-                                    }else{
+                                    } else {
                                         Toast.makeText(SettingsActivity.this, "Error Please Try Again.", Toast.LENGTH_LONG).show();
                                         mProgressDialog.dismiss();
                                     }
@@ -243,7 +229,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 }
                             });
 
-                        }else{
+                        } else {
                             Toast.makeText(SettingsActivity.this, "Error Please Try Again.", Toast.LENGTH_LONG).show();
                             mProgressDialog.dismiss();
 

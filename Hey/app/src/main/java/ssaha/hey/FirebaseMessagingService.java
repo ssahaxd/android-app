@@ -24,10 +24,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(notification_title)
-                .setContentText(notification_message);
-
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(notification_title)
+                        .setContentText(notification_message);
 
 
         Intent resultIntent = new Intent(click_action);
@@ -44,9 +43,9 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         mBuilder.setContentIntent(resultPendingIntent);
 
 
-        int mNotificationId = (int)System.currentTimeMillis();
+        int mNotificationId = (int) System.currentTimeMillis();
         NotificationManager mNotifyMgr =
-                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
 
     }

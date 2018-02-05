@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,40 +35,27 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private final List<Messages> messagesList = new ArrayList<>();
     private String mChatUser;
     private Toolbar mChatToolbar;
-
-
     private DatabaseReference mRootRef;
     private FirebaseAuth mAuth;
     private String mCurrentUserId;
-
-
-
     private TextView mTitleView;
     private TextView mLastSeenView;
     private CircleImageView mProfileImage;
-
-
-
-
     private ImageButton mChatAddBtn;
     private ImageButton mChatSendBtn;
     private EditText mChatMessageView;
-
     private RecyclerView mMessagesList;
-
-    private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
 
 
         mChatToolbar = (Toolbar) findViewById(R.id.chat_app_bar);
@@ -129,9 +114,9 @@ public class ChatActivity extends AppCompatActivity {
                 Picasso.with(getApplicationContext()).load(image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.default_avatar).into(mProfileImage);
 
 
-                if(online.equals("true")){
+                if (online.equals("true")) {
                     mLastSeenView.setText("Online");
-                }else{
+                } else {
 
                     TimeStampToTime timestmp2time = new TimeStampToTime();
 
@@ -155,7 +140,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(!dataSnapshot.hasChild(mChatUser)){
+                if (!dataSnapshot.hasChild(mChatUser)) {
 
                     Map chatAddMap = new HashMap();
                     chatAddMap.put("seen", false);
@@ -169,7 +154,7 @@ public class ChatActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
-                            if(databaseError != null){
+                            if (databaseError != null) {
 
                                 Log.d("CHAT_LOG", databaseError.getMessage().toString());
 
@@ -237,7 +222,7 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage() {
         String message = mChatMessageView.getText().toString();
 
-        if(!TextUtils.isEmpty(message)){
+        if (!TextUtils.isEmpty(message)) {
 
             String current_user_ref = "messages/" + mCurrentUserId + "/" + mChatUser;
             String chat_user_ref = "messages/" + mChatUser + "/" + mCurrentUserId;
@@ -264,7 +249,7 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
-                    if(databaseError != null){
+                    if (databaseError != null) {
 
                         Log.d("CHAT_LOG", databaseError.getMessage().toString());
 
