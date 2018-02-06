@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,7 +44,6 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mTitleView;
     private TextView mLastSeenView;
     private CircleImageView mProfileImage;
-    private ImageButton mChatAddBtn;
     private ImageButton mChatSendBtn;
     private EditText mChatMessageView;
     private RecyclerView mMessagesList;
@@ -86,7 +84,6 @@ public class ChatActivity extends AppCompatActivity {
 
         mTitleView.setText(userName);
 
-        mChatAddBtn = (ImageButton) findViewById(R.id.chat_add_btn);
         mChatSendBtn = (ImageButton) findViewById(R.id.chat_send_btn);
         mChatMessageView = (EditText) findViewById(R.id.chat_message_view);
 

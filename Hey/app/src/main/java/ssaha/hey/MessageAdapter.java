@@ -2,6 +2,7 @@ package ssaha.hey;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,9 +56,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         if (from_user.equals(current_user_id)) {
             viewHolder.messageText.setBackgroundColor(Color.WHITE);
             viewHolder.messageText.setTextColor(Color.BLACK);
+            viewHolder.messageText.setGravity(Gravity.RIGHT);
         } else {
             viewHolder.messageText.setBackgroundResource(R.drawable.message_text_background);
             viewHolder.messageText.setTextColor(Color.WHITE);
+            viewHolder.messageText.setGravity(Gravity.RIGHT);
         }
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(from_user);
