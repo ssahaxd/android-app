@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,7 +51,6 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView mMessagesList;
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +74,6 @@ public class ChatActivity extends AppCompatActivity {
         mChatUser = getIntent().getStringExtra("user_id");
         String userName = getIntent().getStringExtra("user_name");
 
-
-        //getSupportActionBar().setTitle(userName);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
@@ -185,15 +183,16 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
+        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child
+                (mChatUser);
+
         mRootRef.child("messages").child(mCurrentUserId).child(mChatUser).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
                 Messages message = dataSnapshot.getValue(Messages.class);
-
                 messagesList.add(message);
                 mAdapter.notifyDataSetChanged();
-
+                mMessagesList.scrollToPosition(messagesList.size() - 1);
             }
 
             @Override

@@ -5,21 +5,16 @@ package ssaha.hey;
  */
 
 public class Messages {
-    private String message, type;
+    private String message, type, from;
     private long time;
     private boolean seen;
 
-    private String from;
-
-    public Messages(String from) {
-        this.from = from;
-    }
-
-    public Messages(String message, String type, long time, boolean seen) {
+    public Messages(String message, String type, String from, long time, boolean seen) {
         this.message = message;
         this.type = type;
         this.time = time;
         this.seen = seen;
+        this.from = from;
     }
 
     public Messages() {

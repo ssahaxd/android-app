@@ -34,10 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
-
-
             mUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid());
-
         }
 
 
@@ -97,19 +94,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        /*
-        //Making the logout btn work
-        if(item.getItemId() == R.id.main_logout_btn){
-            FirebaseAuth.getInstance().signOut();
-            sendToStart();
-        }
-
-        //Account Settings btn to settings page
-        if(item.getItemId() == R.id.main_setings_btn){
-            Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(settingsIntent);
-        }
-        */
         switch (item.getItemId()) {
             case R.id.main_setings_btn:
                 Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);

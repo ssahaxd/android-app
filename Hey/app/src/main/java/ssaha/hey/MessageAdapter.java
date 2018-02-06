@@ -1,11 +1,13 @@
 package ssaha.hey;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private List<Messages> mMessageList;
     private DatabaseReference mUserDatabase;
+    private FirebaseAuth mAuth;
 
     public MessageAdapter(List<Messages> mMessageList) {
 
@@ -45,13 +48,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(final MessageViewHolder viewHolder, int i) {
-
+        mAuth = FirebaseAuth.getInstance();
+        String current_user_id = mAuth.getCurrentUser().getUid();
         Messages c = mMessageList.get(i);
-
         String from_user = c.getFrom();
+        if (from_user.equals(current_user_id)) {
+            viewHolder.messageText.setBackgroundColor(Color.WHITE);
+            viewHolder.messageText.setTextColor(Color.BLACK);
+        } else {
+            viewHolder.messageText.setBackgroundResource(R.drawable.message_text_background);
+            viewHolder.messageText.setTextColor(Color.WHITE);
+        }
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(from_user);
-
         mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

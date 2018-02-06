@@ -6,15 +6,27 @@
     android:layout_height="match_parent"
     tools:context="ssaha.hey.ChatActivity">
 
-    <include layout="@layout/app_bar_layout" android:id="@+id/chat_app_bar" />
+    <include
+        android:id="@+id/chat_app_bar"
+        layout="@layout/app_bar_layout" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/messages_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/message_swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/chat_app_bar"></android.support.v7.widget.RecyclerView>
+        android:layout_below="@+id/chat_app_bar">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messages_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/linearLayout"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/chat_app_bar" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -43,7 +55,7 @@
             android:layout_weight="8"
             android:background="@android:color/white"
             android:ems="10"
-            android:hint="Enter Message..."
+            android:hint="@string/enter_message"
             android:inputType="textPersonName"
             android:paddingBottom="12dp"
             android:paddingLeft="10dp"
@@ -60,8 +72,6 @@
             android:padding="10dp"
             app:srcCompat="@drawable/ic_send_black_24dp" />
     </LinearLayout>
-
-
 
 
 </RelativeLayout>
